@@ -1,0 +1,456 @@
+---
+title: "MATH381-HW7"
+author: "Ethan Zhuang"
+date: "3/1/2022"
+output: html_document
+---
+
+```{r}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(RColorBrewer)
+library(wordcloud)
+```
+## R Markdown
+
+The code reads in the 8-dimensional vector
+information from the file “hartigan-file22.csv” into a table called
+“cities”, which has the object name, the cities
+
+```{r}
+cities <- read.csv("/Users/yuhaozhuang/Desktop/MATH381/HW7/hartigan-file22.csv",header=FALSE)
+cities <- subset(cities,select=-V2)
+cities
+```
+
+The code gives a matrix of expection values without the name of object, cities.
+```{r}
+cities2 <- subset(cities,select=-V1)
+cities2
+```
+
+This command takes the table “cities2” and creates a matrix of
+distances between every row of the table after applying the
+function “myfun” to every in the table (MARGIN=c(1,2)
+specifies over all rows and columns).
+```{r}
+d <- as.matrix(dist(cities2), method="minkowski",p=2)
+d
+```
+
+```{r}
+
+library(BBmisc)
+```
+Nomalized the data by finding the mean and standard deviation of each column, and then subtracting the mean and divide by the standard deviation in each column. And creates the corresponding distances table.
+```{r}
+# Name this standardization method as normalize1.
+normalize1 <- normalize(cities2,method="standardize",margin=2)
+d1 = dist(normalize1, method="minkowski", p = 2)
+d1
+```
+
+Normalized the data by finding the min and max value in each column, and then mapping each column entry x to (x-min)/(max-min). And creates the corresponding distances table.
+```{r}
+# Name this standardization method as normalize2.
+normalize2 <- matrix(nrow = length(cities2[, 1]), ncol = length(cities2))
+for (j in 1:length(cities2)) {
+  for (i in 1:length(cities2[, j])) {
+    normalize2[i, j] <- (cities2[i, j] - min(cities2[, j]))/(max(cities2[, j]) - min(cities2[, j]))
+  }
+}
+d2 = dist(normalize2, method="minkowski", p = 2)
+d2
+```
+## Models for non-normalization data
+
+```{r}
+# 1-D model
+model1_1 <- cmdscale(d,k=1,eig=TRUE)
+# points in the model
+points1_1 <- model1_1$points
+points1_1
+```
+
+```{r}
+# eigenvalues in the model
+eigs1_1 <- model1_1$eig
+eigs1_1
+```
+
+```{r}
+# Plot eigenvalues
+plot(model1_1$eig, xlab = "Index for cities", ylab = "Eigenvalues")
+```
+
+```{r}
+# GOF of the 1-D model
+GOF1_1 <- model1_1$GOF
+GOF1_1
+```
+
+```{r}
+library(ggrepel)
+# labels
+cityIndex <- 1:length(cities2[, 1])
+# Visulize 1-D model
+model1_1 <- cmdscale(d,k=1)
+for1Dplot <- data.frame(model1_1,0)
+ggplot(for1Dplot, aes(model1_1, X0, label = cityIndex)) +
+  geom_text_repel(max.overlaps = Inf) +
+  geom_point(color = 'red') +
+  theme_classic(base_size = 10)
+```
+
+```{r}
+# the distances in the model compare with the original distances
+plot(dist(cities2, method="minkowski", p = 2), dist(points1_1))
+abline(0, 1, col = "red")
+```
+
+```{r}
+# mean absolute difference of the entries
+diff1_1 <- mean(abs(as.matrix(dist(points1_1)) - d))
+diff1_1
+```
+
+```{r}
+# 2-D model
+model1_2 <- cmdscale(d,k=2,eig=TRUE)
+# points in the model
+points1_2 <- model1_2$points
+points1_2
+```
+
+```{r}
+# eigenvalues in the model
+eigs1_2 <- model1_2$eig
+eigs1_2
+```
+
+```{r}
+# Plot eigenvalues
+plot(model1_2$eig, xlab = "Index for cities", ylab = "Eigenvalues")
+```
+
+```{r}
+# GOF of the 2-D model
+GOF1_2 <- model1_2$GOF
+GOF1_2
+```
+
+```{r}
+library(ggrepel)
+# labels
+cityIndex <- 1:length(cities2[, 1])
+# Visulize 2-D model
+textplot(points1_2[, 1], points1_2[, 2], gsub("(ˆ[ˆ\\s]+\\s{1})", "", cityIndex, perl = TRUE), xlim = c(-10, 40), ylim = c(-10, 40), cex = 0.6)
+```
+
+```{r}
+# the distances in the model compare with the original distances
+plot(dist(cities2, method="minkowski", p = 2), dist(points1_2))
+abline(0, 1, col = "red")
+```
+
+```{r}
+# mean absolute difference of the entries
+diff1_2 <- mean(abs(as.matrix(dist(points1_2)) - d))
+diff1_2
+```
+
+```{r}
+# 3-D model
+model1_3 <- cmdscale(d,k=3,eig=TRUE)
+# points in the model
+points1_3 <- model1_3$points
+points1_3
+```
+
+```{r}
+# eigenvalues in the model
+eigs1_3 <- model1_3$eig
+eigs1_3
+```
+
+```{r}
+# Plot eigenvalues
+plot(model1_3$eig, xlab = "Index for cities", ylab = "Eigenvalues")
+```
+
+```{r}
+# GOF of the 3-D model
+GOF1_3 <- model1_3$GOF
+GOF1_3
+```
+
+```{r}
+# the distances in the model compare with the original distances
+plot(dist(cities2, method="minkowski", p = 2), dist(points1_3))
+abline(0, 1, col = "red")
+```
+
+```{r}
+# mean absolute difference of the entries
+diff1_3 <- mean(abs(as.matrix(dist(points1_3)) - d))
+diff1_3
+```
+##  Models for classic normalization data
+
+```{r}
+# 1-D model
+model2_1 <- cmdscale(d1,k=1,eig=TRUE)
+# points in the model
+points2_1 <- model2_1$points
+points2_1
+```
+
+```{r}
+# eigenvalues in the model
+eigs2_1 <- model2_1$eig
+eigs2_1
+```
+
+```{r}
+# Plot eigenvalues
+plot(model2_1$eig, xlab = "Index for cities", ylab = "Eigenvalues")
+```
+
+```{r}
+# GOF of the 1-D model
+GOF2_1 <- model2_1$GOF
+GOF2_1
+```
+
+```{r}
+m2_1 = data.frame(model2_1$points, 0)
+# Visulize 1-D model
+textplot(m2_1[, 1], m2_1[, 2], gsub("(ˆ[ˆ\\s]+\\s{1})", "", cityIndex, perl = TRUE), xlim = c(-10, 5), ylim = c(-10, 5), cex = 0.6)
+```
+
+```{r}
+# the distances in the model compare with the original distances
+plot(d1, dist(points2_1))
+abline(0, 1, col = "red")
+```
+
+```{r}
+# mean absolute difference of the entries
+diff2_1 <- mean(abs(as.matrix(dist(m2_1)) - as.matrix(d1)))
+diff2_1
+```
+
+```{r}
+# 2-D model
+model2_2 <- cmdscale(d1,k=2,eig=TRUE)
+# points in the model
+points2_2 <- model2_2$points
+points2_2
+```
+
+```{r}
+# eigenvalues in the model
+eigs2_2 <- model2_2$eig
+eigs2_2
+```
+
+```{r}
+# Plot eigenvalues
+plot(model2_2$eig, xlab = "Index for cities", ylab = "Eigenvalues")
+```
+
+```{r}
+# GOF of the 2-D model
+GOF2_2 <- model2_2$GOF
+GOF2_2
+```
+
+```{r}
+m2_2 = data.frame(model2_2$points, 0)
+# Visulize 2-D model
+textplot(m2_2[, 1], m2_2[, 2], gsub("(ˆ[ˆ\\s]+\\s{1})", "", cityIndex, perl = TRUE), xlim = c(-10, 5), ylim = c(-10, 5), cex = 0.6)
+```
+
+```{r}
+# the distances in the model compare with the original distances
+plot(d1, dist(points2_2))
+abline(0, 1, col = "red")
+```
+
+```{r}
+# mean absolute difference of the entries
+diff2_2 <- mean(abs(as.matrix(dist(m2_2)) - as.matrix(d1)))
+diff2_2
+```
+
+```{r}
+# 3-D model
+model2_3 <- cmdscale(d1,k=3,eig=TRUE)
+# points in the model
+points2_3 <- model2_3$points
+points2_3
+```
+
+```{r}
+# eigenvalues in the model
+eigs2_3 <- model2_3$eig
+eigs2_3
+```
+
+```{r}
+# Plot eigenvalues
+plot(model2_3$eig, xlab = "Index for cities", ylab = "Eigenvalues")
+```
+
+```{r}
+# GOF of the 3-D model
+GOF2_3 <- model2_3$GOF
+GOF2_3
+```
+
+```{r}
+m2_3 = data.frame(model2_3$points, 0)
+```
+
+```{r}
+# the distances in the model compare with the original distances
+plot(d1, dist(points2_3))
+abline(0, 1, col = "red")
+```
+
+```{r}
+# mean absolute difference of the entries
+diff2_3 <- mean(abs(as.matrix(dist(m2_3)) - as.matrix(d1)))
+diff2_3
+```
+
+##  Models for another normalization data
+
+```{r}
+# 1-D model
+model3_1 <- cmdscale(d2,k=1,eig=TRUE)
+# points in the model
+points3_1 <- model3_1$points
+points3_1
+```
+
+```{r}
+# eigenvalues in the model
+eigs3_1 <- model3_1$eig
+eigs3_1
+```
+
+```{r}
+# Plot eigenvalues
+plot(model3_1$eig, xlab = "Index for cities", ylab = "Eigenvalues")
+```
+
+```{r}
+# GOF of the 1-D model
+GOF3_1 <- model3_1$GOF
+GOF3_1
+```
+
+```{r}
+m3_1 = data.frame(model3_1$points, 0)
+# Visulize 1-D model
+textplot(m3_1[, 1], m3_1[, 2], gsub("(ˆ[ˆ\\s]+\\s{1})", "", cityIndex, perl = TRUE), xlim = c(-10, 5), ylim = c(-10, 5), cex = 0.6)
+```
+
+```{r}
+# the distances in the model compare with the original distances
+plot(d2, dist(points3_1))
+abline(0, 1, col = "red")
+```
+
+```{r}
+# mean absolute difference of the entries
+diff3_1 <- mean(abs(as.matrix(dist(m3_1)) - as.matrix(d2)))
+diff3_1
+```
+
+```{r}
+# 2-D model
+model3_2 <- cmdscale(d2,k=2,eig=TRUE)
+# points in the model
+points3_2 <- model3_2$points
+points3_2
+```
+
+```{r}
+# eigenvalues in the model
+eigs3_2 <- model3_2$eig
+eigs3_2
+```
+
+```{r}
+# Plot eigenvalues
+plot(model3_2$eig, xlab = "Index for cities", ylab = "Eigenvalues")
+```
+
+```{r}
+# GOF of the 2-D model
+GOF3_2 <- model3_2$GOF
+GOF3_2
+```
+
+```{r}
+m3_2 = data.frame(model3_2$points, 0)
+# Visulize 2-D model
+textplot(m3_2[, 1], m3_2[, 2], gsub("(ˆ[ˆ\\s]+\\s{1})", "", cityIndex, perl = TRUE), xlim = c(-10, 5), ylim = c(-10, 5), cex = 0.6)
+```
+
+```{r}
+# the distances in the model compare with the original distances
+plot(d2, dist(points3_2))
+abline(0, 1, col = "red")
+```
+
+```{r}
+# mean absolute difference of the entries
+diff3_2 <- mean(abs(as.matrix(dist(m3_2)) - as.matrix(d2)))
+diff3_2
+```
+
+```{r}
+# 3-D model
+model3_3 <- cmdscale(d2,k=3,eig=TRUE)
+# points in the model
+points3_3 <- model3_3$points
+points3_3
+```
+
+```{r}
+# eigenvalues in the model
+eigs3_3 <- model3_3$eig
+eigs3_3
+```
+
+```{r}
+# Plot eigenvalues
+plot(model3_3$eig, xlab = "Index for cities", ylab = "Eigenvalues")
+```
+
+```{r}
+# GOF of the 3-D model
+GOF3_3 <- model3_3$GOF
+GOF3_3
+```
+
+```{r}
+m3_3 = data.frame(model3_3$points, 0)
+```
+
+```{r}
+# the distances in the model compare with the original distances
+plot(d2, dist(points3_3))
+abline(0, 1, col = "red")
+```
+
+```{r}
+# mean absolute difference of the entries
+diff3_3 <- mean(abs(as.matrix(dist(m3_3)) - as.matrix(d2)))
+diff3_3
+```
