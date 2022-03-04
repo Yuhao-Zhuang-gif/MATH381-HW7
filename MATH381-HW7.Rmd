@@ -28,6 +28,7 @@ cities
 The code gives a matrix of expection values without the name of object, cities.
 ```{r}
 cities2 <- subset(cities,select=-V1)
+cities2 <- cities2[-c(6), ] 
 cities2
 ```
 
@@ -36,7 +37,7 @@ distances between every row of the table after applying the
 function “myfun” to every in the table (MARGIN=c(1,2)
 specifies over all rows and columns).
 ```{r}
-d <- as.matrix(dist(cities2), method="minkowski",p=2)
+d <- dist(cities2, method="minkowski",p=2)
 d
 ```
 
@@ -96,24 +97,25 @@ library(ggrepel)
 # labels
 cityIndex <- 1:length(cities2[, 1])
 # Visulize 1-D model
-model1_1 <- cmdscale(d,k=1)
-for1Dplot <- data.frame(model1_1,0)
-ggplot(for1Dplot, aes(model1_1, X0, label = cityIndex)) +
-  geom_text_repel(max.overlaps = Inf) +
-  geom_point(color = 'red') +
-  theme_classic(base_size = 10)
+m1_1 = data.frame(model1_1$points, 0)
+textplot(m1_1[, 1], m1_1[, 2], gsub("(ˆ[ˆ\\s]+\\s{1})", "", cityIndex, perl = TRUE), xlim = c(-10, 10), ylim = c(-10, 10), cex = 0.6)
 ```
 
 ```{r}
 # the distances in the model compare with the original distances
-plot(dist(cities2, method="minkowski", p = 2), dist(points1_1))
+plot(d, dist(points1_1))
 abline(0, 1, col = "red")
 ```
 
 ```{r}
 # mean absolute difference of the entries
-diff1_1 <- mean(abs(as.matrix(dist(points1_1)) - d))
-diff1_1
+diff1_1a <- mean(abs(as.matrix(dist(points1_1)) - as.matrix(d)))
+diff1_1a
+```
+```{r}
+# maximum absolute difference of the entries
+diff1_1b <- max(abs(as.matrix(dist(points1_1)) - as.matrix(d)))
+diff1_1b
 ```
 
 ```{r}
@@ -151,14 +153,19 @@ textplot(points1_2[, 1], points1_2[, 2], gsub("(ˆ[ˆ\\s]+\\s{1})", "", cityInde
 
 ```{r}
 # the distances in the model compare with the original distances
-plot(dist(cities2, method="minkowski", p = 2), dist(points1_2))
+plot(d, dist(points1_2))
 abline(0, 1, col = "red")
 ```
 
 ```{r}
 # mean absolute difference of the entries
-diff1_2 <- mean(abs(as.matrix(dist(points1_2)) - d))
-diff1_2
+diff1_2a <- mean(abs(as.matrix(dist(points1_2)) - as.matrix(d)))
+diff1_2a
+```
+```{r}
+# max absolute difference of the entries
+diff1_2b <- max(abs(as.matrix(dist(points1_2)) - as.matrix(d)))
+diff1_2b
 ```
 
 ```{r}
@@ -188,14 +195,20 @@ GOF1_3
 
 ```{r}
 # the distances in the model compare with the original distances
-plot(dist(cities2, method="minkowski", p = 2), dist(points1_3))
+plot(d, dist(points1_3))
 abline(0, 1, col = "red")
 ```
 
 ```{r}
 # mean absolute difference of the entries
-diff1_3 <- mean(abs(as.matrix(dist(points1_3)) - d))
-diff1_3
+diff1_3a <- mean(abs(as.matrix(dist(points1_3)) - as.matrix(d)))
+diff1_3a
+```
+
+```{r}
+# max absolute difference of the entries
+diff1_3b <- max(abs(as.matrix(dist(points1_3)) - as.matrix(d)))
+diff1_3b
 ```
 ##  Models for classic normalization data
 
@@ -238,8 +251,14 @@ abline(0, 1, col = "red")
 
 ```{r}
 # mean absolute difference of the entries
-diff2_1 <- mean(abs(as.matrix(dist(m2_1)) - as.matrix(d1)))
-diff2_1
+diff2_1a <- mean(abs(as.matrix(dist(m2_1)) - as.matrix(d1)))
+diff2_1a
+```
+
+```{r}
+# max absolute difference of the entries
+diff2_1b <- max(abs(as.matrix(dist(m2_1)) - as.matrix(d1)))
+diff2_1b
 ```
 
 ```{r}
@@ -281,8 +300,14 @@ abline(0, 1, col = "red")
 
 ```{r}
 # mean absolute difference of the entries
-diff2_2 <- mean(abs(as.matrix(dist(m2_2)) - as.matrix(d1)))
-diff2_2
+diff2_2a <- mean(abs(as.matrix(dist(m2_2)) - as.matrix(d1)))
+diff2_2a
+```
+
+```{r}
+# max absolute difference of the entries
+diff2_2b <- max(abs(as.matrix(dist(m2_2)) - as.matrix(d1)))
+diff2_2b
 ```
 
 ```{r}
@@ -322,8 +347,13 @@ abline(0, 1, col = "red")
 
 ```{r}
 # mean absolute difference of the entries
-diff2_3 <- mean(abs(as.matrix(dist(m2_3)) - as.matrix(d1)))
-diff2_3
+diff2_3a <- mean(abs(as.matrix(dist(m2_3)) - as.matrix(d1)))
+diff2_3a
+```
+```{r}
+# max absolute difference of the entries
+diff2_3b <- max(abs(as.matrix(dist(m2_3)) - as.matrix(d1)))
+diff2_3b
 ```
 
 ##  Models for another normalization data
@@ -356,7 +386,7 @@ GOF3_1
 ```{r}
 m3_1 = data.frame(model3_1$points, 0)
 # Visulize 1-D model
-textplot(m3_1[, 1], m3_1[, 2], gsub("(ˆ[ˆ\\s]+\\s{1})", "", cityIndex, perl = TRUE), xlim = c(-10, 5), ylim = c(-10, 5), cex = 0.6)
+textplot(m3_1[, 1], m3_1[, 2], gsub("(ˆ[ˆ\\s]+\\s{1})", "", cityIndex, perl = TRUE), xlim = c(-2, 5), ylim = c(-5, 5), cex = 0.6)
 ```
 
 ```{r}
@@ -367,8 +397,13 @@ abline(0, 1, col = "red")
 
 ```{r}
 # mean absolute difference of the entries
-diff3_1 <- mean(abs(as.matrix(dist(m3_1)) - as.matrix(d2)))
-diff3_1
+diff3_1a <- mean(abs(as.matrix(dist(m3_1)) - as.matrix(d2)))
+diff3_1a
+```
+```{r}
+# max absolute difference of the entries
+diff3_1b <- max(abs(as.matrix(dist(m3_1)) - as.matrix(d2)))
+diff3_1b
 ```
 
 ```{r}
@@ -399,7 +434,7 @@ GOF3_2
 ```{r}
 m3_2 = data.frame(model3_2$points, 0)
 # Visulize 2-D model
-textplot(m3_2[, 1], m3_2[, 2], gsub("(ˆ[ˆ\\s]+\\s{1})", "", cityIndex, perl = TRUE), xlim = c(-10, 5), ylim = c(-10, 5), cex = 0.6)
+textplot(m3_2[, 1], m3_2[, 2], gsub("(ˆ[ˆ\\s]+\\s{1})", "", cityIndex, perl = TRUE), xlim = c(-2, 3), ylim = c(-4, 4), cex = 0.6)
 ```
 
 ```{r}
@@ -410,8 +445,14 @@ abline(0, 1, col = "red")
 
 ```{r}
 # mean absolute difference of the entries
-diff3_2 <- mean(abs(as.matrix(dist(m3_2)) - as.matrix(d2)))
-diff3_2
+diff3_2a <- mean(abs(as.matrix(dist(m3_2)) - as.matrix(d2)))
+diff3_2a
+```
+
+```{r}
+# max absolute difference of the entries
+diff3_2b <- max(abs(as.matrix(dist(m3_2)) - as.matrix(d2)))
+diff3_2b
 ```
 
 ```{r}
@@ -451,6 +492,48 @@ abline(0, 1, col = "red")
 
 ```{r}
 # mean absolute difference of the entries
-diff3_3 <- mean(abs(as.matrix(dist(m3_3)) - as.matrix(d2)))
-diff3_3
+diff3_3a <- mean(abs(as.matrix(dist(m3_3)) - as.matrix(d2)))
+diff3_3a
+```
+
+```{r}
+# max absolute difference of the entries
+diff3_3b <- max(abs(as.matrix(dist(m3_3)) - as.matrix(d2)))
+diff3_3b
+```
+
+```{r}
+# Compare the GOF value from 2 normalization methods we used above in 3 different dimensions.
+plot(c(GOF2_1[1], GOF2_2[1], GOF2_3[1]), ylim = c(0.6, 1.0), xlab = "Dimension", ylab = "GOF", col = "blue")
+points(c(GOF3_1[1], GOF3_2[1], GOF3_3[1]), col = "red")
+legend("topright",c("standardized with classic method", "standardized with \"max\ and \"min\" method"), text.col = c("blue","red"), cex =
+1)
+```
+
+```{r}
+# Compare the mean absolute difference between the distance from the data and distance we calculated by using 2 methods above in 3 different dimensions.
+plot(c(diff2_1a, diff2_2a, diff2_3a), ylim = c(0, 1), xlab = "Dimension", ylab = "Mean absolute
+difference", col = "blue")
+points(c(diff3_1a, diff3_2a, diff3_3a), col = "red")
+legend("topright",c("standardized with classic method", "standardized with \"max\ and \"min\" method"), text.col = c("blue","red"), cex =
+1)
+```
+
+```{r}
+# Compare the maximum absolute difference between the distance from the data and distance we calculated by using 2 methods above in 3 different dimensions.
+plot(c(diff2_1b, diff2_2b, diff2_3b), ylim = c(0, 3), xlab = "Dimension", ylab = "Maximum absolute
+difference", col = "blue")
+points(c(diff3_1b, diff3_2b, diff3_3b), col = "red")
+legend("topright",c("standardized with classic method", "standardized with \"max\ and \"min\" method"), text.col = c("blue","red"), cex =
+1)
+```
+
+```{r}
+# Calculate the correlation value for different methods in different dimensions.
+correlation2_3x <- cor(points2_3[, 1], normalize1)
+correlation3_3x <- cor(points3_3[, 1], normalize2)
+correlation2_3y <- cor(points2_3[, 2], normalize1)
+correlation3_3y <- cor(points3_3[, 2], normalize2)
+correlation2_3z <- cor(points2_3[, 3], normalize1)
+correlation3_3z <- cor(points3_3[, 3], normalize2)
 ```
