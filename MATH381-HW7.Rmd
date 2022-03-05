@@ -98,7 +98,7 @@ library(ggrepel)
 cityIndex <- 1:length(cities2[, 1])
 # Visulize 1-D model
 m1_1 = data.frame(model1_1$points, 0)
-textplot(m1_1[, 1], m1_1[, 2], gsub("(ˆ[ˆ\\s]+\\s{1})", "", cityIndex, perl = TRUE), xlim = c(-10, 10), ylim = c(-10, 10), cex = 0.6)
+textplot(m1_1[, 1], m1_1[, 2], gsub("(ˆ[ˆ\\s]+\\s{1})", "", cityIndex, perl = TRUE), xlim = c(-7, 5), ylim = c(-0.1, 0.1), cex = 1)
 ```
 
 ```{r}
@@ -148,7 +148,7 @@ library(ggrepel)
 # labels
 cityIndex <- 1:length(cities2[, 1])
 # Visulize 2-D model
-textplot(points1_2[, 1], points1_2[, 2], gsub("(ˆ[ˆ\\s]+\\s{1})", "", cityIndex, perl = TRUE), xlim = c(-10, 40), ylim = c(-10, 40), cex = 0.6)
+textplot(points1_2[, 1], points1_2[, 2], gsub("(ˆ[ˆ\\s]+\\s{1})", "", cityIndex, perl = TRUE), xlim = c(-10, 40), ylim = c(-4, 4), cex = 1)
 ```
 
 ```{r}
@@ -240,7 +240,7 @@ GOF2_1
 ```{r}
 m2_1 = data.frame(model2_1$points, 0)
 # Visulize 1-D model
-textplot(m2_1[, 1], m2_1[, 2], gsub("(ˆ[ˆ\\s]+\\s{1})", "", cityIndex, perl = TRUE), xlim = c(-10, 5), ylim = c(-10, 5), cex = 0.6)
+textplot(m2_1[, 1], m2_1[, 2], gsub("(ˆ[ˆ\\s]+\\s{1})", "", cityIndex, perl = TRUE), xlim = c(-5, 4), ylim = c(-0.1, 0.1), cex = 1)
 ```
 
 ```{r}
@@ -289,7 +289,7 @@ GOF2_2
 ```{r}
 m2_2 = data.frame(model2_2$points, 0)
 # Visulize 2-D model
-textplot(m2_2[, 1], m2_2[, 2], gsub("(ˆ[ˆ\\s]+\\s{1})", "", cityIndex, perl = TRUE), xlim = c(-10, 5), ylim = c(-10, 5), cex = 0.6)
+textplot(m2_2[, 1], m2_2[, 2], gsub("(ˆ[ˆ\\s]+\\s{1})", "", cityIndex, perl = TRUE), xlim = c(-5, 4), ylim = c(-2, 3), cex = 1)
 ```
 
 ```{r}
@@ -386,7 +386,7 @@ GOF3_1
 ```{r}
 m3_1 = data.frame(model3_1$points, 0)
 # Visulize 1-D model
-textplot(m3_1[, 1], m3_1[, 2], gsub("(ˆ[ˆ\\s]+\\s{1})", "", cityIndex, perl = TRUE), xlim = c(-2, 5), ylim = c(-5, 5), cex = 0.6)
+textplot(m3_1[, 1], m3_1[, 2], gsub("(ˆ[ˆ\\s]+\\s{1})", "", cityIndex, perl = TRUE), xlim = c(-1.5, 1), ylim = c(-0.1, 0.1), cex = 1)
 ```
 
 ```{r}
@@ -434,7 +434,7 @@ GOF3_2
 ```{r}
 m3_2 = data.frame(model3_2$points, 0)
 # Visulize 2-D model
-textplot(m3_2[, 1], m3_2[, 2], gsub("(ˆ[ˆ\\s]+\\s{1})", "", cityIndex, perl = TRUE), xlim = c(-2, 3), ylim = c(-4, 4), cex = 0.6)
+textplot(m3_2[, 1], m3_2[, 2], gsub("(ˆ[ˆ\\s]+\\s{1})", "", cityIndex, perl = TRUE), xlim = c(-1.5, 1), ylim = c(-1, 1), cex = 1)
 ```
 
 ```{r}
